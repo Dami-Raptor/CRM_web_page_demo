@@ -1,0 +1,15 @@
+{
+    "name": "React Frontend (CRM WEB PAGE DEMO)",
+    "dockerComposeFile": "../docker-compose-rpg-web.yml",
+    "service": "frontend",
+    "workspaceFolder": "/app",
+    "customizations": {
+        "vscode": {
+            "settings": {},
+            "extensions": [
+                "dbaeumer.vscode-eslint",
+                "esbenp.prettier-vscode"
+            ]
+        }
+    }
+}

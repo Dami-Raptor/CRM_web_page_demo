@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: rpg_postgres_demo
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  app:
+    image: python:3.12-slim
+    container_name: rpg_python_demo_app
+    env_file:
+      - .env
+    volumes:
+      - ./app:/app
+    working_dir: /app
+    command: sh -c "pip install -r requirements.txt && tail -f /dev/null"
+    depends_on:
+      - db
+  
+  pytests:
+    image: python:3.12-slim
+    container_name: rpg_python_test
+    env_file:
+      - .env
+    volumes:
+    - ./app:/app
+    working_dir: /app
+    command: sh -c "pip install -r requirements.txt && pytest tests/test_core.py -v && tail -f /dev/null"
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:

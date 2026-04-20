@@ -1,0 +1,18 @@
+#Usamos imagen ligera de python 
+FROM python:3.12-slim
+
+#Evita que python guarde archivos pyc en el discon (ideal para docker)
+ENV PYTHONDONTWRITEBYTECODE 1
+
+#Evita que python retrase los prints en la consola
+ENV PYTHONUNBUFFERED 1
+
+#Creamo la carpeta de trabajo dentro del contenedor
+WORKDIR /app
+
+#Copiamos el inventario e instalamos las dependencias
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
+
+#Copiamos el resto del codigo
+COPY . /app/

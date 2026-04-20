@@ -2,25 +2,25 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api'; 
 import type { AuthTokens } from '../types'; 
-
+// Componentes para el login
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Hook para redireccionar a otras paginas
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault(); 
+    e.preventDefault(); //Evita que el formulario recargue la pagina
     setError('');
 
     try {
-      const response = await api.post<AuthTokens>('token/', {
+      const response = await api.post<AuthTokens>('token/', { // Obtener tokens de autenticacion
         username,
         password,
       });
 
-      const { access, refresh } = response.data;
+      const { access, refresh } = response.data; // Guardar tokens en localStorage
       localStorage.setItem('access_token', access);
       localStorage.setItem('refresh_token', refresh);
       navigate('/dashboard');
@@ -31,129 +31,67 @@ export default function Login() {
     }
   };
 
-  const styles = {
-    container: {
-      width: '100vw',
-      height: '100vh',
-      margin: 0,
-      padding: 0,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'radial-gradient(circle at center, #1e1b4b 0%, #020617 100%)',
-      fontFamily: "'Inter', sans-serif",
-      color: 'white',
-      overflow: 'hidden',
-    },
-    card: {
-      backgroundColor: 'rgba(15, 23, 42, 0.6)', 
-      backdropFilter: 'blur(12px)',
-      padding: '3.5rem 2.5rem',
-      borderRadius: '1.5rem',
-      boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8)',
-      width: '90%',
-      maxWidth: '420px',
-      border: '1px solid rgba(255, 255, 255, 0.05)',
-      textAlign: 'center' as const,
-    },
-    title: {
-      fontSize: '2.5rem',
-      fontWeight: '700',
-      marginBottom: '0.5rem',
-    },
-    subtitle: {
-      color: '#64748b',
-      fontSize: '1rem',
-      marginBottom: '2rem',
-    },
-    input: {
-      width: '100%',
-      padding: '1.1rem 1.5rem',
-      borderRadius: '2.5rem', 
-      backgroundColor: '#0f172a',
-      border: '1px solid #1e293b',
-      color: 'white',
-      fontSize: '1rem',
-      marginBottom: '1.2rem',
-      outline: 'none',
-      boxSizing: 'border-box' as const,
-    },
-    button: {
-      width: '100%',
-      background: 'linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%)',
-      color: 'white',
-      fontWeight: '600',
-      fontSize: '1.1rem',
-      padding: '1.1rem',
-      borderRadius: '2.5rem',
-      border: 'none',
-      cursor: 'pointer',
-      marginTop: '1.5rem',
-      boxShadow: '0 10px 20px -5px rgba(79, 70, 229, 0.5)',
-    },
-    link: {
-      color: '#6366f1',
-      fontSize: '0.9rem',
-      textDecoration: 'none',
-      cursor: 'pointer',
-    }
-  };
-
   return (
-    <div>
-      <style>{`
-        body, html { 
-          margin: 0; 
-          padding: 0; 
-          width: 100%; 
-          height: 100%; 
-          overflow: hidden;
-        }
-      `}</style>
-
-      <div style={styles.container}>
-        <div style={styles.card}>
-          <h1 style={styles.title}>Login</h1>
-          <p style={styles.subtitle}>Please sign in to continue</p>
-
-          {error && (
-            <div style={{ backgroundColor: 'rgba(220, 38, 38, 0.15)', border: '1px solid #ef4444', color: '#f87171', padding: '0.8rem', borderRadius: '1rem', marginBottom: '1.2rem', fontSize: '0.875rem' }}>
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleLogin}>
+    <div className="relative min-h-screen w-full flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-[radial-gradient(circle_at_center,_#1a1b3a_0%,_#020205_100%)]" />
+      <div className="bg-gray-800/40 backdrop-blur-md p-8 rounded-[2.5rem] border-2 border-blue-500/30 shadow-2xl w-full max-w-[400px] shadow-[0_0_30px_rgba(59,130,246,0.15)]">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-2 h-8 bg-blue-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]"></div>
+          <h3 className="text-xl font-bold text-white">Login</h3>
+        </div>
+        <p className="text-gray-400 text-sm mb-6 ml-1">Please sign in to continue</p>
+        {error && (
+          <div className="mb-5 p-3 rounded-xl text-sm text-red-300 bg-red-500/10 border border-red-500/30">
+            {error}
+          </div>
+        )}
+        <form onSubmit={handleLogin} className="space-y-5">
+          <div className="space-y-2">
+            <label className="text-xs text-gray-400 ml-4 font-medium uppercase tracking-wider">
+              Username
+            </label>
             <input
               type="text"
               placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              style={styles.input}
+              className="w-full px-6 py-4 bg-gray-900/60 border border-gray-700 rounded-full text-white outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-gray-600"
               required
             />
-            
+          </div>
+          <div className="space-y-2">
+            <label className="text-xs text-gray-400 ml-4 font-medium uppercase tracking-wider">
+              Password
+            </label>
             <input
               type="password"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              style={styles.input}
+              className="w-full px-6 py-4 bg-gray-900/60 border border-gray-700 rounded-full text-white outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-gray-600"
               required
             />
-
-            <div style={{ textAlign: 'left', paddingLeft: '1rem' }}>
-              <span style={styles.link}>Forget password?</span>
-            </div>
-
-            <button type="submit" style={styles.button}>
-              Login
+          </div>
+          <div className="text-left px-2">
+            <a href="#" className="text-blue-400 text-xs hover:underline transition-colors">
+              Forget password?
+            </a>
+          </div>
+          <div className="pt-2">
+            <button
+              onClick={handleLogin}
+              type="submit"
+              className="w-full py-4 px-6 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-white font-semibold rounded-full shadow-lg shadow-blue-900/20 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]">
+              LOGIN
             </button>
-          </form>
-
-          <p style={{ marginTop: '2rem', color: '#64748b', fontSize: '0.9rem' }}>
-            Don't have an account? <span style={styles.link}>click here</span>
+          </div>
+          <p className="text-gray-500 text-xs text-center pt-4">
+            Don't have an account?{' '}
+            <span className="text-blue-400 cursor-pointer hover:underline transition-colors">
+              click here
+            </span>
           </p>
-        </div>
+        </form>
       </div>
     </div>
   );

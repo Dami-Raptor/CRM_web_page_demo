@@ -14,11 +14,11 @@ export default function Button ({
     const baseClasses = "w-full font-bold py-2 px-4 rounded transition-colors duration-200 shadow-sm";
 
     const colorVariants = {
-        primary: "bg-blue-600 hover:bg-blue-700 text-white rounded-2xl",
-        success: "bg-slate-700 hover:bg-slate-600 text-white rounded-2xl",
-        danger: "bg-red-500/20 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/50 rounded-2xl",
-        warning: "bg-amber-500/20 hover:bg-amber-500 text-amber-500 hover:text-black border border-amber-500/50 rounded-2xl",
-        outline: "bg-white/5 border border-white/10 hover:bg-white/10 text-gray-300 rounded-2xl"
+        primary: "bg-blue-500/70 hover:bg-blue-600/80 text-white rounded-2xl",
+        success: "bg-gray-700/70 hover:bg-gray-600/80 text-white rounded-2xl",
+        danger: "bg-red-400/20 hover:bg-red-400/40 text-red-400 hover:text-white border border-red-400/30 rounded-2xl",
+        warning: "bg-yellow-400/20 hover:bg-yellow-400/40 text-yellow-500 hover:text-gray-900 border border-yellow-400/30 rounded-2xl",
+        outline: "bg-white/10 border border-white/20 hover:bg-white/20 text-gray-300 rounded-2xl"
     };
 
     return(

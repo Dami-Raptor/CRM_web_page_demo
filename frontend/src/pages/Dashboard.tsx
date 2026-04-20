@@ -1,123 +1,110 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
-import type { Lead, Person } from '../types';
-import AddLead from "../components/AddLead";
-import LeadCard from '../components/LeadCard'; 
+import type { Company } from '../types';
+import CompanyCard from '../components/CompanyCard';
+import AddCompany from '../components/AddCompany';
+import Button from '../components/Button';
+
 export default function Dashboard() {
-    const [leads, setLeads] = useState<Lead[]>([]);
-    const [persons, setPersons] = useState<Person[]>([]);
+    const [companies, setCompanies] = useState<Company[]>([]); // Almacena la lista de empresas obtenida inicialmente vacia
     const navigate = useNavigate();
+    const [leads, setLeads] = useState([]);
+    const [sellers, setSellers] = useState([]);
 
     useEffect(() => {
-        cargarTablero();
+        cargarTablero(); 
     }, []);
 
     const cargarTablero = async () => {
         try {
-            const [resLeads, resPersons] = await Promise.all([
-                api.get<Lead[]>('leads/'),
-                api.get<Person[]>('persons/')
+            // Realiza 3 solicitudes a la api para obtener empresas, leads y vendedores simultaneamente
+            const [resCompany, resLead, resSeller] = await Promise.all([
+                api.get('companies/'),
+                api.get('leads/'),
+                api.get('sellers/')
             ]);
-            setLeads(resLeads.data);
-            setPersons(resPersons.data);
+            // Actualiza los estados con los datos obtenidos
+            setCompanies(resCompany.data);
+            setLeads(resLead.data);
+            setSellers(resSeller.data);
         } catch (error) {
-            console.error("Error cargando datos:", error);
+            console.error(error);
         }
     };
-
     const handleLogout = () => {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         navigate('/login');
     };
-    const getPersonData = (personId: number) => {
-        const person = persons.find(p => p.id === personId);
-        return person || { name: 'Desconocido', lastName: '', email: '' } as Person;
+    const handleLeads = (e: React.MouseEvent) => {
+        e.preventDefault();
+        navigate('/leads');
     };
-
-    const styles = {
-        container: {
-            minHeight: '100vh',
-            width: '100vw',
-            background: 'radial-gradient(circle at center, #1a1b3a 0%, #020205 100%)',
-            color: 'white',
-            fontFamily: "'Inter', sans-serif",
-            padding: '2rem',
-            boxSizing: 'border-box' as const,
-        },
-        header: {
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '3rem',
-            paddingBottom: '1rem',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-        },
-        title: {
-            fontSize: '2.2rem',
-            fontWeight: '800',
-            background: 'linear-gradient(90deg, #60A5FA 0%, #A78BFA 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-        },
-        mainLayout: {
-            display: 'flex',
-            gap: '2.5rem',
-            alignItems: 'flex-start',
-        },
-        sidebar: {
-            width: '400px',
-            position: 'sticky' as const,
-            top: '2rem',
-        },
-        gridContainer: {
-            flex: 1,
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-            gap: '1.5rem',
-        }
+    const handleSellers = (e: React.MouseEvent) => {
+        e.preventDefault();
+        navigate('/sellers');
     };
-
     return (
-        <div style={styles.container}>
-            <style>{`body, html { margin: 0; padding: 0; overflow-x: hidden; }`}</style>
+        <div className="min-h-screen w-full bg-[#020205] bg-[radial-gradient(circle_at_center,_#1a1b3a_0%,_#020205_100%)] text-white font-sans p-8">
+            <header className="flex flex-col md:flex-row justify-between items-center mb-12 pb-6 border-b border-white/10 gap-6">
+                <div>
+                    <h1 className="text-4xl font-black bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                        CRM Engine
+                    </h1>
+                    <p className="text-gray-500 text-sm font-medium tracking-widest uppercase mt-1">Gestión de Leads & Ventas</p>
+                </div>
 
-            <header style={styles.header}>
-                <h1 style={styles.title}>CRM - Gestión de Leads</h1>
-                <button onClick={handleLogout} style={{
-                    backgroundColor: 'rgba(220, 38, 38, 0.2)',
-                    color: '#F87171',
-                    padding: '0.6rem 1.5rem',
-                    borderRadius: '2rem',
-                    border: '1px solid #DC2626',
-                    cursor: 'pointer',
-                    fontWeight: 'bold'
-                }}>
-                    Cerrar sesión
-                </button>
-            </header>
+                    <nav className="flex flex-wrap gap-3">
+                        <div>
+                            <Button onClick={handleSellers} variant="success" className="!w-auto">
+                                Vendedores
+                            </Button>
+                        </div>
+                        
+                        <Button onClick={handleLeads} variant="success" className="!w-auto">
+                                Leads
+                            </Button>
+                        <Button onClick={handleLogout} variant="danger" className="!w-auto">
+                                Cerrar Sesion
+                            </Button>
+                    </nav>
+                </header>
 
-            <div style={styles.mainLayout}>
-                <aside style={styles.sidebar}>
-                    <AddLead onSuccess={cargarTablero} />
-                </aside>
-
-                <main style={styles.gridContainer}>
-                    {leads.length === 0 ? (
-                        <p style={{ color: '#64748b' }}>No hay registros disponibles</p>
-                    ) : (
-                        leads.map((lead) => (
-                            <LeadCard
-                                key={lead.id}
-                                lead={lead}
-                                person={getPersonData(lead.person)} 
-                                onSuccess={cargarTablero}
+                <div className="flex flex-col lg:flex-row gap-10 items-start">
+                    <aside className="w-full lg:w-[450px] lg:sticky lg:top-8">
+                        <div className="relative group">
+                            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-[2.6rem] blur opacity-20 group-hover:opacity-30 transition duration-1000"></div>
+                            <AddCompany onSuccess={cargarTablero} />
+                        </div>
+                    </aside>
+                    <main className="flex-1 w-full">
+                        { companies.length === 0 ? (
+                            <div className="h-64 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-[2.5rem]">
+                                <p className="text-gray-600 font-medium">No hay registros en la base de datos.</p>
+                            </div>
+                        ) : (
+                        <>
+                        <div className="flex items-center gap-4 mb-6">
+                        <h2 className="text-2xl font-bold">Empresas</h2>
+                        <span className="bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-xs font-black">
+                            {companies.length} TOTAL
+                        </span>  
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-6">
+                        {companies.map(company => (
+                            <CompanyCard 
+                            key={company.id} 
+                            company={company} 
+                            leads={leads} 
+                            sellers={sellers} 
                             />
-                        ))
+                        ))}
+                        </div>
+                    </>
                     )}
-                </main>
-            </div>
+                    </main>
+                </div>
         </div>
     );
 }

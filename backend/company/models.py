@@ -19,7 +19,7 @@ class Person(models.Model):
         return f"{self.name.title()} {self.lastname.title()} \n {self.email}"
     
 class Seller(models.Model):
-    badget = models.CharField(max_length=10, unique=True)
+    badge = models.CharField(max_length=10, unique=True)
     performance = models.FloatField(default=0)
     commission = models.FloatField(default=0.05)
     person = models.ForeignKey(Person, related_name='sellers', on_delete=models.CASCADE)
@@ -38,11 +38,11 @@ class Lead(models.Model):
         ('Media', 'Media'),
         ('Baja', 'Baja')
         ]
-    butget = models.FloatField(default=1.0)
+    butget = models.FloatField(default=0.0)
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='Prospecto')
     priority = models.CharField(max_length=50, choices=PRIORITY_CHOICES, null=False)
     person = models.ForeignKey(Person, related_name='leads', on_delete=models.CASCADE)
-    company  = models.ForeignKey(Company, related_name='leads',  on_delete=models.CASCADE)
+    company  = models.ForeignKey(Company, related_name='leads',  on_delete=models.CASCADE, null=True, blank=True)
     seller   = models.ForeignKey(Seller,  related_name='leads',  on_delete=models.SET_NULL, null=True, blank=True)
     
     def __init__(self, *args, **kwargs): # Sobrescribe el metodo init para guardar el vendedor original

@@ -41,7 +41,7 @@ services:
       context: ./microservicio
       dockerfile: Docker-fast.dev
     container_name: crm_fastapi
-    command: uvicorn main:app --host 0.0.00 --port 8001 --reload
+    command: uvicorn main:app --host 0.0.0.0 --port 8001 --reload
     volumes:
       - ./microservicio:/app
     ports:
